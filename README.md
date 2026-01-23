@@ -23,12 +23,12 @@ This project uses environment variables for configuration.
 Create a .env file based on the provided .env.example file:
 cp .env.example .env
 
-Backend Environment Variables
-Variable Description Example
-PORT API server port 4010
-MONGO_URI MongoDB connection string mongodb://localhost:27017
-DB_NAME MongoDB database name logbook
-FRONT_ORIGIN Frontend URL for CORS configuration http://localhost:3000
+| Variable       | Description                         | Example                     |
+| -------------- | ----------------------------------- | --------------------------- |
+| `PORT`         | API server port                     | `4010`                      |
+| `MONGO_URI`    | MongoDB connection string           | `mongodb://localhost:27017` |
+| `DB_NAME`      | MongoDB database name               | `logbook`                   |
+| `FRONT_ORIGIN` | Frontend URL for CORS configuration | `http://localhost:3000`     |
 
 ⚠️ Note:
 In production, these values should be adjusted to match your VPS, Docker network, or reverse proxy setup.
@@ -95,11 +95,14 @@ Safer for audits, analytics, and future recovery
 
 🚀 Conclusion
 
-This project represents a complete backend solution, covering the full lifecycle from local development to production deployment.
+This project represents a complete backend solution, covering the entire lifecycle from local development to production deployment.
+
 Throughout its implementation, real-world best practices were applied, including:
-Containerized architecture with Docker
-Logical deletion to preserve data integrity
-Rate limiting to protect against API abuse
-Clean and maintainable RESTful endpoints
-Deployment and operation on a real VPS environment
-The purpose of this project is not only to deliver functionality, but also to demonstrate practical backend development skills, production awareness, and problem-solving experience.
+
+- Containerized architecture using Docker
+- Logical deletion to preserve data integrity
+- Rate limiting to protect the API against abuse
+- Clean, well-structured, and maintainable RESTful endpoints
+- Deployment and operation in a real VPS environment
+
+The goal of this project goes beyond delivering functionality. It aims to demonstrate practical backend development skills, production awareness, and real-world problem-solving experience.
