@@ -77,7 +77,7 @@ In production, these values should be adjusted to match your VPS, Docker network
 
 ### Get Logs (Paginated & Searchable)
 
-```http
+http
 GET /logs/getList?page=1&search=
 
 Create Log
@@ -85,11 +85,13 @@ POST /logs/insertTask
 
 Request Body:
 
+```
 {
 "title": "Example title",
 "content": "Example content",
 "tags": ["docker", "node", "mongodb"]
 }
+```
 
 Soft Delete Log
 DELETE /logs/:id
@@ -126,4 +128,3 @@ Throughout its implementation, real-world best practices were applied, including
 - Deployment and operation in a real VPS environment
 
 The goal of this project goes beyond delivering functionality. It aims to demonstrate practical backend development skills, production awareness, and real-world problem-solving experience.
-```
