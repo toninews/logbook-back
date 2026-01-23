@@ -33,31 +33,51 @@ cp .env.example .env
 ⚠️ Note:
 In production, these values should be adjusted to match your VPS, Docker network, or reverse proxy setup.
 
-✨ Features
-Core Functionality
+## ✨ Features
 
-Log Management: Create, list, search, and soft-delete logs
-Pagination: Paginated responses for better performance and scalability
-Search Engine: Search logs by title, content, or tags
-Soft Delete: Logical deletion to preserve historical data
+### Core Functionality
 
-Security & Reliability
+- **Log Management**  
+  Create, list, search, and soft-delete logs
 
-Rate Limiting: Protection against API abuse and brute-force attacks
-Default: 5 requests per minute per IP
-Input Validation: Required fields validation for critical operations
-Error Handling: Consistent error responses with proper HTTP status codes
+- **Pagination**  
+  Paginated responses for improved performance and scalability
 
-Technical Features
+- **Search Engine**  
+  Search logs by title, content, or tags
 
-RESTful API architecture
-MongoDB using the native Node.js driver
-Fully Dockerized environment
-Dedicated Docker network for inter-container communication
-Automatic container restart on failure (restart: unless-stopped)
+- **Soft Delete**  
+  Logical deletion strategy to preserve historical data
 
-📡 API Endpoints
-Get Logs (Paginated & Searchable)
+---
+
+### 🔐 Security & Reliability
+
+- **Rate Limiting**  
+  Protection against API abuse and brute-force attacks
+  - Default limit: **5 requests per minute per IP**
+
+- **Input Validation**  
+  Required fields validation for critical operations
+
+- **Error Handling**  
+  Consistent error responses with proper HTTP status codes
+
+---
+
+### ⚙️ Technical Features
+
+- RESTful API architecture
+- MongoDB using the native Node.js driver
+- Fully Dockerized environment
+- Dedicated Docker network for inter-container communication
+- Automatic container restart on failure (`restart: unless-stopped`)
+
+## 📡 API Endpoints
+
+### Get Logs (Paginated & Searchable)
+
+```http
 GET /logs/getList?page=1&search=
 
 Create Log
@@ -79,19 +99,19 @@ Performs a logical deletion, preserving the record in the database instead of ph
 
 🛡️ Basic Security Layer
 
-This project includes a custom security layer focused on protecting the API from abuse:
-Custom in-memory rate limiting middleware
-IP-based request tracking
-Configurable request limits per IP
-HTTP 429 (Too Many Requests) response on abuse detection
+- This project includes a custom security layer focused on protecting the API from abuse:
+- Custom in-memory rate limiting middleware
+- IP-based request tracking
+- Configurable request limits per IP
+- HTTP 429 (Too Many Requests) response on abuse detection
 
 🗑️ Logical Deletion Strategy
 
-Instead of physically deleting records from the database, this API applies logical deletion:
-Records are marked with isDeleted: true
-Deletion timestamps are stored
-Data history is preserved
-Safer for audits, analytics, and future recovery
+- Instead of physically deleting records from the database, this API applies logical deletion:
+- Records are marked with isDeleted: true
+- Deletion timestamps are stored
+- Data history is preserved
+- Safer for audits, analytics, and future recovery
 
 🚀 Conclusion
 
@@ -106,3 +126,4 @@ Throughout its implementation, real-world best practices were applied, including
 - Deployment and operation in a real VPS environment
 
 The goal of this project goes beyond delivering functionality. It aims to demonstrate practical backend development skills, production awareness, and real-world problem-solving experience.
+```
