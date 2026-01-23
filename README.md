@@ -4,15 +4,11 @@ This project was created to simulate a real-world backend system running in a pr
 
 The main goals were to practice and demonstrate:
 
-REST API design with pagination and filtering
-
-Docker networking between multiple services
-
-MongoDB integration in a containerized setup
-
-Basic security mechanisms, such as rate limiting
-
-Real VPS deployment, troubleshooting, and maintenance
+- REST API design with pagination and filtering
+- Docker networking between multiple services
+- MongoDB integration in a containerized setup
+- Basic security mechanisms, such as rate limiting
+- Real VPS deployment, troubleshooting, and maintenance
 
 📘 Logbook API
 
@@ -22,25 +18,16 @@ It was built with real-world production concerns in mind, including security, da
 
 The API allows users to:
 
-Create logs
-
-List logs with pagination
-
-Search logs by title, content, or tags
-
-Perform logical deletion (soft delete)
-
-The application runs fully containerized with Docker and is deployed on a Linux VPS, closely simulating a production environment.
-
-This project was developed as a portfolio piece to demonstrate practical backend skills, focusing on:
-
-API design and best practices
-
-Database integration
-
-Docker networking
-
-Defensive programming
+- Create logs
+- List logs with pagination
+- Search logs by title, content, or tags
+- Perform logical deletion (soft delete)
+- The application runs fully containerized with Docker and is deployed on a Linux VPS, closely simulating a production environment.
+- This project was developed as a portfolio piece to demonstrate practical backend skills, focusing on:
+- API design and best practices
+- Database integration
+- Docker networking
+- Defensive programming
 
 🔐 Environment Variables
 
