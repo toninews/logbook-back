@@ -49,7 +49,6 @@ router.get("/getList", async (req, res) => {
 
 router.post("/insertTask", rateLimit({ windowMs: 60 * 1000, max: 5 }), async (req, res) => { //nome da rota
   try {
-    console.log('body', req?.body)
     const { title, content, tags } = req.body;
 
     if (!title || !content) {
