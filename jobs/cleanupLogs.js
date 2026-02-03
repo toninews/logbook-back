@@ -1,9 +1,8 @@
-require("dotenv").config();
-const db = require("../db/db");
+const { exec } = require("../db/db");
 
 async function cleanup() {
   try {
-    const result = await db.exec.collection("logs").deleteMany({});
+    const result = await exec.collection("logs").deleteMany({});
     console.log(`[CLEANUP] Logs removidos: ${result.deletedCount}`);
   } catch (err) {
     console.error("[CLEANUP ERROR]", err);
@@ -11,3 +10,5 @@ async function cleanup() {
 }
 
 cleanup();
+
+setInterval(cleanup, 1000 * 60 * 60);
