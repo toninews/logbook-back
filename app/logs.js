@@ -1,9 +1,7 @@
 const express = require("express");
 const router = express.Router();
-const db = require("../db/db");
 const { ObjectId } = require("mongodb");
 const rateLimit = require("../middlewares/rateLimiter");
-
 
 router.get("/getList", async (req, res) => {
   try {
@@ -25,7 +23,7 @@ router.get("/getList", async (req, res) => {
       : {};
     const finalFilter = { ...baseFilter, ...searchFilter };
 
-    const logsCollection = db.exec.collection("logs");
+    const logsCollection = req.db.collection("logs");
 
     const totalLogs = await logsCollection.countDocuments(finalFilter);
 
@@ -67,7 +65,7 @@ router.post("/insertTask", rateLimit({ windowMs: 60 * 1000, max: 5 }), async (re
       isDeleted: false, 
     };
 
-    const result = await db.exec.collection("logs").insertOne(logObject);
+    const result = await req.db.collection("logs").insertOne(logObject);
 
     res.status(201).json({
       _id: result.insertedId,
@@ -84,7 +82,7 @@ router.delete("/:id", async (req, res) => { //nome da rota
     const { id } = req.params;
     console.log('id:', id);
 
-    const result = await db.exec.collection("logs").updateOne(
+    const result = await req.db.collection("logs").updateOne(
       { _id: new ObjectId(id) },
       {
         $set: {

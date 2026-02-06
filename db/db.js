@@ -7,27 +7,26 @@ const client = new MongoClient(url, {
 });
 
 
-async function connect() {
-  try {
-    await client.connect();
-    console.log("Connected successfully to MongoDB");
-  } catch (err) {
-    console.error("Failed to connect to MongoDB:", err);
-  }
+let db = null;
+
+async function connectDB() {
+  if (db) return db;
+try {
+  await client.connect();
+  console.log("✅ Successfully connected to MongoDB");
+
+  db = client.db(process.env.DB_NAME);
+
+  return db;
+  } catch (err) { 
+  console.error("❌ Failed to connect to MongoDB:", err);
+  throw err; }
 }
 
-connect();
-
-const exec = client.db(process.env.DB_NAME);
-
 process.on("SIGINT", async () => {
-  try {
-    await client.close();
-    console.log("MongoDB connection closed");
-  } catch (err) {
-    console.error("Failed to close MongoDB connection:", err);
-  }
+  await client.close();
+  console.log("MongoDB connection closed");
   process.exit(0);
 });
 
-module.exports = { exec };
+module.exports = connectDB;
