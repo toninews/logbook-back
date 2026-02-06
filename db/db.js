@@ -13,13 +13,13 @@ async function connectDB() {
   if (db) return db;
 try {
   await client.connect();
-  console.log("✅ Successfully connected to MongoDB");
+  console.log("Successfully connected to MongoDB");
 
   db = client.db(process.env.DB_NAME);
 
   return db;
   } catch (err) { 
-  console.error("❌ Failed to connect to MongoDB:", err);
+  console.error("Failed to connect to MongoDB:", err);
   throw err; }
 }
 
