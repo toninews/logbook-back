@@ -98,7 +98,7 @@ async function startServer() {
 
 
     process.on("SIGINT", async () => {
-      console.log("🛑 Gracefully shutting down server...");
+      console.log("Gracefully shutting down server...");
       server.close(() => process.exit(0));
     });
 
