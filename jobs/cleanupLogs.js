@@ -1,8 +1,9 @@
-const { exec } = require("../db/db");
+const connectDB = require("../db/db");
 
 async function cleanup() {
   try {
-    const result = await exec.collection("logs").deleteMany({});
+    const db = await connectDB();
+    const result = await db.collection("logs").deleteMany({});
     console.log(`[CLEANUP] Logs removidos: ${result.deletedCount}`);
   } catch (err) {
     console.error("[CLEANUP ERROR]", err);
