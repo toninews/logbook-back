@@ -5,7 +5,7 @@ const path = require("path");
 const cors = require("cors");
 const cookieParser = require("cookie-parser");
 const fs = require("fs");
-const connectDB = require("./db/db");
+const { connectDB, closeDB } = require("./db/db");
 
 const app = express();
 const PORT = process.env.PORT || 4010;
@@ -39,9 +39,12 @@ files.forEach((fileName) => {
 async function startServer() {
   try {
     const db = await connectDB();
-    app.locals.db = db; 
+    app.locals.db = db;
 
-    app.use((req, res, next) => { req.db = app.locals.db; next(); });
+    app.use((req, res, next) => {
+      req.db = app.locals.db;
+      next();
+    });
 
     loadRoutes();
 
@@ -59,10 +62,30 @@ async function startServer() {
       console.log(`Server running at http://localhost:${PORT}`);
     });
 
-    process.on("SIGINT", async () => {
-      console.log("Gracefully shutting down server...");
-      server.close(() => process.exit(0));
-    });
+    let isShuttingDown = false;
+    const shutdown = async (signal) => {
+      if (isShuttingDown) return;
+      isShuttingDown = true;
+
+      console.log(`Gracefully shutting down server (${signal})...`);
+
+      try {
+        await new Promise((resolve, reject) => {
+          server.close((err) => {
+            if (err) return reject(err);
+            return resolve();
+          });
+        });
+        await closeDB();
+        process.exit(0);
+      } catch (err) {
+        console.error("[FATAL] Error during shutdown:", err);
+        process.exit(1);
+      }
+    };
+
+    process.on("SIGINT", () => shutdown("SIGINT"));
+    process.on("SIGTERM", () => shutdown("SIGTERM"));
   } catch (error) {
     console.error("[FATAL] Failed to start server:", error);
     process.exit(1);

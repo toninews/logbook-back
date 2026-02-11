@@ -1,4 +1,4 @@
-const connectDB = require("../db/db");
+const { connectDB } = require("../db/db");
 
 async function cleanup() {
   try {
