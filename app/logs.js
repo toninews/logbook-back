@@ -5,8 +5,17 @@ const { ObjectId } = require("mongodb");
 const rateLimit = require("../middlewares/rateLimiter");
 
 function requireWriteToken(req, res, next) {
-  const receivedToken = req.headers["x-write-token"];
+  const headerToken = req.headers["x-write-token"];
+  const authHeader = req.headers.authorization;
   const expectedToken = process.env.WRITE_TOKEN;
+
+  let receivedToken = headerToken;
+  if (!receivedToken && typeof authHeader === "string") {
+    const bearerPrefix = "Bearer ";
+    if (authHeader.startsWith(bearerPrefix)) {
+      receivedToken = authHeader.slice(bearerPrefix.length).trim();
+    }
+  }
 
   if (!expectedToken) {
     return res.status(500).json({ error: "WRITE_TOKEN não configurado no servidor" });
