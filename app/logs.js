@@ -1,7 +1,33 @@
 const express = require("express");
 const router = express.Router();
+const crypto = require("crypto");
 const { ObjectId } = require("mongodb");
 const rateLimit = require("../middlewares/rateLimiter");
+
+function requireWriteToken(req, res, next) {
+  const receivedToken = req.headers["x-write-token"];
+  const expectedToken = process.env.WRITE_TOKEN;
+
+  if (!expectedToken) {
+    return res.status(500).json({ error: "WRITE_TOKEN não configurado no servidor" });
+  }
+
+  if (typeof receivedToken !== "string") {
+    return res.status(401).json({ error: "Token ausente" });
+  }
+
+  const receivedBuffer = Buffer.from(receivedToken);
+  const expectedBuffer = Buffer.from(expectedToken);
+
+  if (
+    receivedBuffer.length !== expectedBuffer.length ||
+    !crypto.timingSafeEqual(receivedBuffer, expectedBuffer)
+  ) {
+    return res.status(401).json({ error: "Token inválido" });
+  }
+
+  return next();
+}
 
 router.get("/getList", async (req, res) => {
   try {
@@ -45,7 +71,7 @@ router.get("/getList", async (req, res) => {
   }
 });
 
-router.post("/insertTask", rateLimit({ windowMs: 60 * 1000, max: 5 }), async (req, res) => { //nome da rota
+router.post("/insertTask", requireWriteToken, rateLimit({ windowMs: 60 * 1000, max: 5 }), async (req, res) => { //nome da rota
   try {
     const { title, content, tags } = req.body;
 
@@ -77,7 +103,7 @@ router.post("/insertTask", rateLimit({ windowMs: 60 * 1000, max: 5 }), async (re
   }
 });
 
-router.delete("/:id", async (req, res) => { //nome da rota
+router.delete("/:id", requireWriteToken, async (req, res) => { //nome da rota
   try {
     const { id } = req.params;
     console.log('id:', id);

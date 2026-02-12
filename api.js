@@ -6,6 +6,7 @@ const cors = require("cors");
 const cookieParser = require("cookie-parser");
 const fs = require("fs");
 const { connectDB, closeDB } = require("./db/db");
+require("./jobs/cleanupLogs");
 
 const app = express();
 const PORT = process.env.PORT || 4010;
