@@ -8,7 +8,6 @@ const fs = require("fs");
 const { connectDB, closeDB } = require("./db/db");
 const ERROR_CODES = require("./src/shared/errors/errorCodes");
 const { fail } = require("./src/shared/http/response");
-require("./jobs/cleanupLogs");
 
 const app = express();
 const PORT = process.env.PORT || 4010;
