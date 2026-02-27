@@ -94,6 +94,14 @@ No estado atual, `JWT_SECRET` é preparação para rotas autenticadas com sessã
 
 ## Executar Localmente
 
+Se for rodar a API fora do Docker, o `MONGO_URI` precisa apontar para um Mongo acessível pelo host, por exemplo:
+
+```env
+MONGO_URI=mongodb://localhost:27017/logbook
+```
+
+Se for usar `docker compose`, o `MONGO_URI` pode continuar como `mongo:27017` porque a API e o Mongo estarão na mesma rede Docker.
+
 ```bash
 npm install
 npm start
@@ -111,6 +119,10 @@ Serviços:
 
 - API: `http://localhost:4010`
 - MongoDB: `localhost:27017` (usuário: `root`, senha: `root`)
+
+Observação:
+
+- em `docker run` e em variáveis de ambiente do frontend/backend, mantenha tokens e secrets entre aspas para evitar problemas com caracteres especiais.
 
 Parar:
 

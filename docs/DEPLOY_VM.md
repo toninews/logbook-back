@@ -2,6 +2,10 @@
 
 Este guia usa o mesmo fluxo que voce ja fazia com `docker run`, so atualizado para a versao refatorada.
 
+Observacao:
+
+- mantenha tokens e secrets entre aspas no `docker run`.
+
 ## 1) Criar rede (uma vez)
 
 ```bash
@@ -44,7 +48,6 @@ docker run -d \
   -e MONGO_URI="mongodb://root:root@mongo:27017/logbook?authSource=admin" \
   -e FRONT_ORIGIN="http://SEU_IP_OU_DOMINIO_FRONT:3000" \
   -e WRITE_TOKEN="SEU_TOKEN_FORTE" \
-  -e JWT_SECRET="SEU_SEGREDO_FORTE" \
   -e LOG_TTL_SECONDS=3600 \
   logbook-back
 ```
@@ -62,8 +65,9 @@ docker run -d \
   --name logbook-front \
   --network logbook-net \
   --restart unless-stopped \
-  -p 3000:3000 \
-  -e baseUrl="http://SEU_IP_OU_DOMINIO_BACK:4010" \
+  -p 3000:80 \
+  -e NUXT_PUBLIC_API_BASE="http://SEU_IP_OU_DOMINIO_BACK:4010" \
+  -e NUXT_PUBLIC_WRITE_TOKEN="SEU_TOKEN_FORTE" \
   logbook-front
 ```
 
@@ -83,7 +87,9 @@ curl "http://localhost:4010/logs/getList?page=1&search="
 
 ## Observacoes importantes
 
-- `WRITE_TOKEN` e `JWT_SECRET` agora sao obrigatorios para o backend operar com seguranca.
+- `WRITE_TOKEN` e obrigatorio nas rotas de escrita.
+- `JWT_SECRET` so e necessario se voce ativar rotas autenticadas com JWT.
 - `LOG_TTL_SECONDS=3600` remove logs automaticamente apos 1 hora (TTL no Mongo).
 - Se voce mudar credenciais do Mongo, ajuste `MONGO_URI`.
 - Se existir outro processo usando `4010`, pare ele antes do `docker run`.
+- Se mudar env do frontend em projeto Nuxt buildado, faca rebuild/restart do container para refletir os valores novos.
