@@ -1,0 +1,203 @@
+REFATORACAO CLEAN - LOGBOOK API
+Projeto: logbook
+Data: 2026-02-27
+
+1) OBJETIVO GERAL DA REFATORACAO
+Sair de um modelo com regra concentrada em rota/controller para um desenho com
+responsabilidades separadas (HTTP, aplicacao, dominio e infraestrutura), mantendo
+compatibilidade da API e evoluindo qualidade de codigo para vaga.
+
+2) COMO ERA (ANTES)
+Arquivo principal:
+- app/logs.js
+
+O modulo de logs concentrava no endpoint:
+- validacao de entrada
+- regra de pagina/search
+- regra de soft delete
+- autenticacao por token de escrita
+- montagem de objeto
+- acesso direto ao MongoDB
+- resposta HTTP
+
+Problema pratico:
+- controller/rota com multiplas responsabilidades
+- alto acoplamento Express + Mongo + regra
+- baixa testabilidade sem servidor/banco
+
+3) COMO FICOU (DEPOIS)
+Arquitetura aplicada (estilo MVC + Clean/Hexagonal):
+- src/modules/logs/domain
+- src/modules/logs/application/useCases
+- src/modules/logs/infra
+- src/modules/logs/interfaces/http
+- src/shared/errors
+- src/shared/http
+
+Arquivo de composicao da rota:
+- app/logs.js
+
+O que mudou no desenho:
+- Controller HTTP ficou fino
+- Use cases concentram orquestracao de regra
+- Dominio concentra regra pura de entidade
+- Repositorio Mongo isolado na infraestrutura
+- Erro e resposta HTTP padronizados em shared
+
+4) FASES EXECUTADAS
+
+FASE 1 - Extracao do modulo logs para camadas
+Arquivos criados/refatorados:
+- src/modules/logs/domain/buildLogEntity.js
+- src/modules/logs/application/useCases/getLogsUseCase.js
+- src/modules/logs/application/useCases/createLogUseCase.js
+- src/modules/logs/application/useCases/softDeleteLogUseCase.js
+- src/modules/logs/infra/MongoLogRepository.js
+- src/modules/logs/interfaces/http/logsController.js
+- src/modules/logs/interfaces/http/requireWriteToken.js
+- src/shared/errors/AppError.js
+
+Resultado:
+- regras principais sairam da rota
+- controller passou a delegar para use cases
+
+FASE 2 - Contrato HTTP padronizado
+Arquivos:
+- src/shared/http/response.js
+- api.js
+- src/modules/logs/interfaces/http/logsController.js
+
+Contrato definido:
+- sucesso: { success: true, data, meta? }
+- erro: { success: false, error: { code, message } }
+
+Resultado:
+- frontend passa a ter contrato consistente
+- erros de dominio preservam status correto
+
+FASE 3 - Auth no mesmo padrao
+Arquivos:
+- src/modules/auth/application/useCases/verifySessionUseCase.js
+- src/modules/auth/infra/MongoUserRepository.js
+- src/modules/auth/interfaces/http/verifyJWTMiddleware.js
+- utils/verify.js (ponte de compatibilidade)
+
+Resultado:
+- fluxo de sessao desacoplado da rota
+- regra de usuario ativo/inativo ficou centralizada
+
+FASE 4 - Testes unitarios e de rota
+Arquivos de teste:
+- test/logs/*.test.js
+- test/auth/verifySessionUseCase.test.js
+- test/auth/verifyJWTMiddleware.test.js
+- test/shared/response.test.js
+- test/integration/logsRoutes.integration.test.js
+
+Cobertura atual:
+- dominio
+- use cases
+- controllers
+- middlewares de auth/token
+- contrato HTTP
+- fluxo de rota logs
+
+Resultado:
+- validacao automatica das regras mais importantes
+- seguranca maior para evoluir sem regressao
+
+FASE 5 - Qualidade, CI e padrao de erro
+Arquivos:
+- .github/workflows/ci.yml
+- eslint.config.js
+- .prettierrc
+- .prettierignore
+- src/shared/errors/errorCodes.js
+
+Resultado:
+- CI valida lint + format + testes
+- codigos de erro centralizados em constantes
+- menor risco de typo e divergencia de contrato
+
+FASE 6 - DI por modulo e validacao de borda
+Arquivos:
+- app/logs.js (factory createLogsRouter({ db }))
+- api.js (loader suporta router/factory)
+- src/modules/logs/interfaces/http/validateLogsRequest.js
+
+Resultado:
+- dependencias de logs montadas por modulo (nao por request)
+- validacao HTTP explicita para query/body/params
+
+5) POR QUE ISSO E MAIS "CLEAN"
+Separacao de responsabilidade:
+- Router/Controller: transporte HTTP
+- Use case: orquestracao da aplicacao
+- Domain: regra de negocio pura
+- Infra: MongoDB e detalhes externos
+
+Beneficios praticos:
+- menor acoplamento com Express/Mongo
+- testes sem servidor real
+- evolucao mais segura
+- onboarding mais rapido para quem estuda o projeto
+
+6) FLUXO ATUAL (EXEMPLO: POST /logs/insertTask)
+1. Router recebe a requisicao.
+2. Middleware valida token de escrita.
+3. Middleware de rate limit aplica controle por IP.
+4. Middleware valida body (title/content/tags).
+5. Controller chama CreateLogUseCase.
+6. Use case chama buildLogEntity (regra de dominio).
+7. Use case usa MongoLogRepository para persistir.
+8. Controller devolve 201 no contrato padronizado.
+9. Em erro, AppError sobe para middleware global e resposta sai com code/status corretos.
+
+7) LIMITES ATUAIS (AINDA NAO E CLEAN "MAXIMO")
+- Ainda nao ha repository interface formal por dominio (apenas adapter concreto).
+- Ainda nao ha DI container dedicado (factory simples ja aplicada).
+- Ainda nao ha testes de integracao com banco real (atual e sem rede/porta no ambiente).
+- Mensagens ja padronizadas em PT-BR, mas podem evoluir para catalogo i18n.
+
+8) DECISOES TECNICAS IMPORTANTES
+- AppError como tipo padrao de erro de dominio/aplicacao.
+- errorCodes centralizado para estabilidade de contrato.
+- Response helper centralizado para padronizar payload HTTP.
+- Testes de verifyJWTMiddleware com mock de jsonwebtoken via Module._load
+  para validar comportamento sem dependencia do ambiente.
+
+9) PROXIMOS PASSOS RECOMENDADOS
+1. Criar interface explicita de repositorio por modulo (porta).
+2. Adicionar teste de integracao com Mongo real em ambiente CI opcional.
+3. Adicionar observabilidade (requestId + log estruturado).
+4. Definir politica de versionamento de API (v1) e contrato de erro documentado.
+5. Preparar PR final com commits por fase para facilitar revisao tecnica.
+
+10) RESUMO CURTO
+Antes: regra misturada com HTTP e acesso ao banco em rota.
+Depois: camadas separadas, contrato padrao, erros consistentes, CI de qualidade,
+validacao de borda e suite de testes cobrindo pontos criticos.
+Resultado: base muito mais solida para estudo, manutencao e apresentacao em vaga.
+
+11) FASE EXTRA - PORTS DE REPOSITORIO + GARANTIA DE CONTRATO
+Objetivo:
+- Formalizar contrato entre use case e repositorio (porta), reduzindo acoplamento ao adapter concreto.
+
+Arquivos criados:
+- src/modules/logs/application/ports/LogRepositoryPort.js
+- src/modules/auth/application/ports/UserRepositoryPort.js
+- src/shared/contracts/assertRepositoryContract.js
+
+Arquivos adaptados:
+- use cases de logs/auth validam contrato no constructor
+- MongoLogRepository e MongoUserRepository passam a estender suas ports
+- errorCodes recebe DEPENDENCY_CONTRACT_ERROR
+
+Beneficio:
+- falha rapida e clara quando dependencia injetada nao respeita contrato esperado
+- melhor sinalizacao arquitetural de porta/adapter para estudo de hexagonal
+
+Testes adicionados:
+- test/shared/assertRepositoryContract.test.js
+- test/logs/useCaseContract.test.js
+- test/auth/useCaseContract.test.js

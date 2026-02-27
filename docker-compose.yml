@@ -1,0 +1,51 @@
+services:
+  mongo:
+    image: mongo:7
+    container_name: logbook-mongo
+    restart: unless-stopped
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: root
+      MONGO_INITDB_DATABASE: logbook
+    volumes:
+      - mongo_data:/data/db
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "mongosh",
+          "--quiet",
+          "-u",
+          "root",
+          "-p",
+          "root",
+          "--authenticationDatabase",
+          "admin",
+          "--eval",
+          "db.adminCommand({ ping: 1 }).ok",
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: logbook-api
+    restart: unless-stopped
+    depends_on:
+      mongo:
+        condition: service_healthy
+    env_file:
+      - .env
+    environment:
+      PORT: 4010
+      DB_NAME: logbook
+      MONGO_URI: mongodb://root:root@mongo:27017/logbook?authSource=admin
+      FRONT_ORIGIN: http://localhost:3000
+    ports:
+      - "4010:4010"
+
+volumes:
+  mongo_data:
