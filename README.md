@@ -80,15 +80,15 @@ Crie o `.env` a partir do `.env.example` e ajuste os valores:
 cp .env.example .env
 ```
 
-| Variável | Descrição | Exemplo |
-| --- | --- | --- |
-| `PORT` | Porta do servidor da API | `4010` |
-| `MONGO_URI` | String de conexão do MongoDB | `mongodb://root:root@mongo:27017/logbook?authSource=admin` |
-| `DB_NAME` | Nome do banco | `logbook` |
-| `FRONT_ORIGIN` | Origem permitida no CORS | `http://localhost:3000` |
-| `WRITE_TOKEN` | Token exigido nas rotas de escrita | `replace-with-strong-token` |
-| `JWT_SECRET` | Segredo para validação JWT (opcional se nenhuma rota JWT estiver ativa) | `replace-with-strong-jwt-secret` |
-| `LOG_TTL_SECONDS` | Tempo de vida do log no Mongo (TTL) | `3600` |
+| Variável          | Descrição                                                               | Exemplo                                                    |
+| ----------------- | ----------------------------------------------------------------------- | ---------------------------------------------------------- |
+| `PORT`            | Porta do servidor da API                                                | `4010`                                                     |
+| `MONGO_URI`       | String de conexão do MongoDB                                            | `mongodb://root:root@mongo:27017/logbook?authSource=admin` |
+| `DB_NAME`         | Nome do banco                                                           | `logbook`                                                  |
+| `FRONT_ORIGIN`    | Origem permitida no CORS                                                | `http://localhost:3000`                                    |
+| `WRITE_TOKEN`     | Token exigido nas rotas de escrita                                      | `replace-with-strong-token`                                |
+| `JWT_SECRET`      | Segredo para validação JWT (opcional se nenhuma rota JWT estiver ativa) | `replace-with-strong-jwt-secret`                           |
+| `LOG_TTL_SECONDS` | Tempo de vida do log no Mongo (TTL)                                     | `3600`                                                     |
 
 Sem autenticação local, também pode usar: `mongodb://localhost:27017`.
 Logs expiram automaticamente via índice TTL em `createdAt`.
@@ -189,13 +189,6 @@ Workflow do GitHub Actions incluído:
 - Matrix: Node `20.x` e `22.x`
 - Etapas: `npm ci` + `npm run lint` + `npm run format:check` + `npm test`
 
-### Notas de Estudo
-
-Anotações detalhadas locais da refatoração:
-
-- `docs/ESTUDO_REFATORACAO.txt`
-- `docs/REFATORACAO_CLEAN_LOGBOOK_FASES.txt`
-
 ---
 
 ## English
@@ -278,15 +271,15 @@ Create `.env` from `.env.example` and adjust the values:
 cp .env.example .env
 ```
 
-| Variable | Description | Example |
-| --- | --- | --- |
-| `PORT` | API server port | `4010` |
-| `MONGO_URI` | MongoDB connection string | `mongodb://root:root@mongo:27017/logbook?authSource=admin` |
-| `DB_NAME` | Database name | `logbook` |
-| `FRONT_ORIGIN` | Allowed CORS origin | `http://localhost:3000` |
-| `WRITE_TOKEN` | Token required on write routes | `replace-with-strong-token` |
-| `JWT_SECRET` | Secret used for JWT validation (optional if no JWT routes are active) | `replace-with-strong-jwt-secret` |
-| `LOG_TTL_SECONDS` | Log lifetime in MongoDB (TTL) | `3600` |
+| Variable          | Description                                                           | Example                                                    |
+| ----------------- | --------------------------------------------------------------------- | ---------------------------------------------------------- |
+| `PORT`            | API server port                                                       | `4010`                                                     |
+| `MONGO_URI`       | MongoDB connection string                                             | `mongodb://root:root@mongo:27017/logbook?authSource=admin` |
+| `DB_NAME`         | Database name                                                         | `logbook`                                                  |
+| `FRONT_ORIGIN`    | Allowed CORS origin                                                   | `http://localhost:3000`                                    |
+| `WRITE_TOKEN`     | Token required on write routes                                        | `replace-with-strong-token`                                |
+| `JWT_SECRET`      | Secret used for JWT validation (optional if no JWT routes are active) | `replace-with-strong-jwt-secret`                           |
+| `LOG_TTL_SECONDS` | Log lifetime in MongoDB (TTL)                                         | `3600`                                                     |
 
 For local runs without auth, you can also use `mongodb://localhost:27017`.
 Logs expire automatically through a TTL index on `createdAt`.
@@ -386,10 +379,3 @@ Included GitHub Actions workflow:
 - Triggers: `push` and `pull_request`
 - Matrix: Node `20.x` and `22.x`
 - Steps: `npm ci` + `npm run lint` + `npm run format:check` + `npm test`
-
-### Study Notes
-
-Detailed local refactoring notes:
-
-- `docs/ESTUDO_REFATORACAO.txt`
-- `docs/REFATORACAO_CLEAN_LOGBOOK_FASES.txt`
